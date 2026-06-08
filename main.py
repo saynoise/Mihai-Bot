@@ -118,7 +118,7 @@ async def vr(ctx:commands.Context, *dados:int):
     embed.add_field(
         #5
         name='',
-        value='+-'*25
+        value='+-'*22
     )
     
     async def callback(interaction: discord.Interaction):
