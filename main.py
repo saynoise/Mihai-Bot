@@ -29,6 +29,12 @@ async def vr(ctx:commands.Context, *dados:int):
     resultados_emoji = []
     sucessos = 0
     dados_total = sum(dados)
+
+    if dados_total > 65:
+        return await ctx.send(
+            content='O limite de dados atualmente é 66.'
+        )
+    
     view = discord.ui.View()
     botao = discord.ui.Button(
         label='Rerolar Falhas',
@@ -186,18 +192,24 @@ async def vr(ctx:commands.Context, *dados:int):
         )
 
         botao.disabled = True
-        await interaction.response.edit_message(
-            content=''.join(str(i) for i in resultados_emoji),
-            embed=embed,
-            view=view)
+        try:
+            await interaction.response.edit_message(
+                content=''.join(str(i) for i in resultados_emoji),
+                embed=embed,
+                view=view)
+        except discord.HTTPException as e:
+            print(f'Erro ao editar mensagem: {e}')
     
     botao.callback = callback
     view.add_item(botao)
-
-    await ctx.send(
-        content=''.join(str(i) for i in resultados_emoji),
-        embed=embed,
-        view=view)
+    
+    try:
+        await ctx.send(
+            content=''.join(str(i) for i in resultados_emoji),
+            embed=embed,
+            view=view)
+    except discord.HTTPException as e:
+        print(f'Erro mensagem: {e}')
 
 @vr.error
 async def vr_error(ctx, error):
