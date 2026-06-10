@@ -1,3 +1,4 @@
+import sistema
 import os
 import discord
 import random
@@ -10,12 +11,6 @@ DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
 
 intents = discord.Intents.all()
 bot = commands.Bot('!', intents=intents)
-
-class Emojis:
-    sucesso = '<:sucesso:1512846827962237121>'
-    falha = '<:falha:1512846801290530948>'
-    critico = '<:critico:1512846854608650311>'
-    fcritica = '<:falhacritica:1512846843183104031>'
 
 @bot.event
 async def on_ready():
@@ -46,21 +41,19 @@ async def vr(ctx:commands.Context, *dados:int):
         rolagem = random.randint(1,10)
         resultados.append(rolagem)
 
-        if rolagem >= 6: 
-            sucessos += 1
-            if rolagem == 10:
-                criticos += 1
-                resultados_emoji.append(Emojis.critico)
-            else:
-                resultados_emoji.append(Emojis.sucesso)
+        calculo_regras = sistema.regras(rolagem)
 
-        if rolagem < 6:
-            if rolagem == 1:
-                fracassos += 1
-                resultados_emoji.append(Emojis.fcritica)
-            else:
-                resultados_emoji.append(Emojis.falha)
-    
+        if calculo_regras['fracasso']:
+            fracassos += 1
+        
+        if calculo_regras['critico']:
+            criticos += 1
+
+        if calculo_regras['sucesso']:
+            sucessos += 1
+
+        resultados_emoji.append(calculo_regras['emoji'])
+
     resultado_final = (sucessos + criticos) - fracassos
     show_dados = ' '.join(str(x) for x in resultados)
 
