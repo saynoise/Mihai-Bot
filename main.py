@@ -18,11 +18,6 @@ async def on_ready():
 
 @bot.command()
 async def vr(ctx:commands.Context, *dados:int):
-    fracassos = 0
-    criticos = 0
-    resultados = []
-    resultados_emoji = []
-    sucessos = 0
     dados_total = sum(dados)
 
     if dados_total > 65:
@@ -30,35 +25,22 @@ async def vr(ctx:commands.Context, *dados:int):
             content='O limite de dados atualmente é 66.'
         )
     
+    resultado_dados = sistema.rolar(dados_total)
+
+    resultados = resultado_dados['resultados']
+
+    resultado_final = (resultado_dados['sucessos'] + resultado_dados['criticos']) - resultado_dados['fracassos']
+
     view = discord.ui.View()
     botao = discord.ui.Button(
         label='Rerolar Falhas',
         style=discord.ButtonStyle.primary
     )
 
-    for i in range(dados_total):
-
-        rolagem = random.randint(1,10)
-        resultados.append(rolagem)
-
-        calculo_regras = sistema.regras(rolagem)
-
-        if calculo_regras['fracasso']:
-            fracassos += 1
-        
-        if calculo_regras['critico']:
-            criticos += 1
-
-        if calculo_regras['sucesso']:
-            sucessos += 1
-
-        resultados_emoji.append(calculo_regras['emoji'])
-
-    resultado_final = (sucessos + criticos) - fracassos
-    show_dados = ' '.join(str(x) for x in resultados)
+    show_dados = ' '.join(str(x) for x in resultado_dados['resultados'])
 
     if resultado_final != 0:
-        if criticos == 0:
+        if resultado_dados['criticos'] == 0:
             embed = discord.Embed(
         title = 'Rolagem',
         colour = discord.Colour.green()
@@ -89,21 +71,21 @@ async def vr(ctx:commands.Context, *dados:int):
     embed.add_field(
         #1
         name = 'Sucessos',
-        value = f'Rolou: **{sucessos}** Sucessos.',
+        value = f'Rolou: **{resultado_dados['sucessos']}** Sucessos.',
         inline = False
     )
 
     embed.add_field(
         #2
         name='Criticos',
-        value=f'Rolou: **{criticos}** Criticos.',
+        value=f'Rolou: **{resultado_dados['criticos']}** Criticos.',
         inline=False
     )
 
     embed.add_field(
         #3
         name='Falhas Criticas',
-        value=f'Rolou: **{fracassos}** Falhas Criticas.',
+        value=f'Rolou: **{resultado_dados['fracassos']}** Falhas Criticas.',
         inline=False
     )
 
@@ -124,6 +106,7 @@ async def vr(ctx:commands.Context, *dados:int):
         fracassos = 0
         criticos = 0
         sucessos = 0
+        rerolar = False
 
         if interaction.user.id != ctx.author.id:
             await interaction.response.send_message(
@@ -134,21 +117,17 @@ async def vr(ctx:commands.Context, *dados:int):
 
         for chave, valor in enumerate(resultados):
             if valor < 6:
-                resultados[chave] = random.randint(1, 10)
-            if resultados[chave] >= 6: 
-                sucessos += 1
-                if resultados[chave] == 10:
-                    criticos += 1 
-                    resultados_emoji[chave] = Emojis.critico
-                else:
-                    resultados_emoji[chave] = Emojis.sucesso
 
-            if resultados[chave] < 6:
-                if resultados[chave] == 1:
-                    fracassos += 1
-                    resultados_emoji[chave] = Emojis.fcritica
-                else:
-                    resultados_emoji[chave] = Emojis.falha
+                rerolar = sistema.rolar(1)
+                resultado_dados['emoji'][chave] = rerolar['emoji'][0]
+                resultado_dados['resultados'][chave] = rerolar['resultados'][0]
+                sucessos += rerolar['sucessos']
+                criticos += rerolar['criticos']
+                fracassos += rerolar['fracassos']
+        
+        sucessos += resultado_dados['sucessos']
+        criticos += resultado_dados['criticos']
+        fracassos += resultado_dados['fracassos']
 
         resultado_final = (sucessos + criticos) - fracassos
 
@@ -187,7 +166,7 @@ async def vr(ctx:commands.Context, *dados:int):
         botao.disabled = True
         try:
             await interaction.response.edit_message(
-                content=''.join(str(i) for i in resultados_emoji),
+                content=''.join(str(i) for i in resultado_dados['emoji']),
                 embed=embed,
                 view=view)
         except discord.HTTPException as e:
@@ -198,7 +177,7 @@ async def vr(ctx:commands.Context, *dados:int):
     
     try:
         await ctx.send(
-            content=''.join(str(i) for i in resultados_emoji),
+            content=''.join(str(i) for i in resultado_dados['emoji']),
             embed=embed,
             view=view)
     except discord.HTTPException as e:

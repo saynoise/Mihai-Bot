@@ -28,10 +28,20 @@ def rolar(dados):
         if calculo_regras['sucesso']:
             sucessos += 1
 
-        resultados_emoji.append(calculo_regras['emoji'])   
+        resultados_emoji.append(calculo_regras['emoji']) 
 
-def regras(rolagem):
-    corte = 6
+    resultados = {
+        'resultados':resultados,
+        'fracassos':fracassos,
+        'criticos':criticos,
+        'sucessos':sucessos,
+        'emoji':resultados_emoji
+        }  
+    
+    return resultados
+
+def regras(rolagem, valor_corte=6):
+    corte = valor_corte
     fracasso = False
     falha = False
     critico = False
