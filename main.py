@@ -1,7 +1,6 @@
 import sistema
 import os
 import discord
-import random
 from discord.ext import commands
 from dotenv import load_dotenv
 
@@ -34,6 +33,11 @@ async def vr(ctx:commands.Context, *dados:int):
     view = discord.ui.View()
     botao = discord.ui.Button(
         label='Rerolar Falhas',
+        style=discord.ButtonStyle.primary
+    )
+
+    dificuldade = discord.ui.Button(
+        label='Mudar Dificuldade',
         style=discord.ButtonStyle.primary
     )
 
@@ -172,8 +176,14 @@ async def vr(ctx:commands.Context, *dados:int):
         except discord.HTTPException as e:
             print(f'Erro ao editar mensagem: {e}')
     
+    async def interacao_teste(interaction: discord.Interaction):
+        print('funcionou')
+
+    dificuldade.callback = interacao_teste
+
     botao.callback = callback
     view.add_item(botao)
+    view.add_item(dificuldade)
     
     try:
         await ctx.send(
