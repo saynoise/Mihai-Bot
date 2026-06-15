@@ -40,6 +40,37 @@ def rolar(dados):
     
     return resultados
 
+def alterar_dificuldade(valores, dificuldade):
+    fracassos = 0
+    criticos = 0
+    resultados_emoji = []
+    sucessos = 0
+
+    for valor in valores:
+        calculo_regras = regras(valor, dificuldade)
+
+        if calculo_regras['fracasso']:
+            fracassos += 1
+        
+        if calculo_regras['critico']:
+            criticos += 1
+
+        if calculo_regras['sucesso']:
+            sucessos += 1
+
+        resultados_emoji.append(calculo_regras['emoji']) 
+
+    resultados = {
+        'resultados':valores,
+        'fracassos':fracassos,
+        'criticos':criticos,
+        'sucessos':sucessos,
+        'emoji':resultados_emoji
+        }  
+    
+
+
+
 def regras(rolagem, valor_corte=6):
     corte = valor_corte
     fracasso = False

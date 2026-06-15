@@ -33,12 +33,12 @@ async def vr(ctx:commands.Context, *dados:int):
     view = discord.ui.View()
     botao = discord.ui.Button(
         label='Rerolar Falhas',
-        style=discord.ButtonStyle.primary
+        style=discord.ButtonStyle.secondary
     )
 
     dificuldade = discord.ui.Button(
-        label='Mudar Dificuldade',
-        style=discord.ButtonStyle.primary
+        label='Dificuldade',
+        style=discord.ButtonStyle.secondary
     )
 
     show_dados = ' '.join(str(x) for x in resultado_dados['resultados'])
@@ -176,7 +176,23 @@ async def vr(ctx:commands.Context, *dados:int):
         except discord.HTTPException as e:
             print(f'Erro ao editar mensagem: {e}')
     
+    class DificuldadeModal(discord.ui.Modal):
+        def __init__(self):
+            super().__init__(title='Dificuldade')
+        
+        dificuldade = discord.ui.TextInput(label='Dificuldade',max_length=1,placeholder='Digite um número de 1 a 9')
+
+        async def alterar_dificuldade(self):
+            nova_dificuldade = sistema.alterar_dificuldade(resultado_dados['resultados'],int(self.dificuldade.value))
+            return nova_dificuldade
+
+
+        async def on_submit(self, interaction: discord.Interaction):
+            print (f'isso aqui é o print {self.alterar_dificuldade()}')
+            await interaction.response.send_message(f'Dificuldade definida para: {self.dificuldade.value}')
+
     async def interacao_teste(interaction: discord.Interaction):
+        await interaction.response.send_modal(DificuldadeModal())
         print('funcionou')
 
     dificuldade.callback = interacao_teste
