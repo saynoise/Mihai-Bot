@@ -179,17 +179,58 @@ async def vr(ctx:commands.Context, *dados:int):
     class DificuldadeModal(discord.ui.Modal):
         def __init__(self):
             super().__init__(title='Dificuldade')
+            self.mensagem = mensagem
         
         dificuldade = discord.ui.TextInput(label='Dificuldade',max_length=1,placeholder='Digite um número de 1 a 9')
 
-        async def alterar_dificuldade(self):
+        def alterar_dificuldade(self):
+            print('ativou a func')
             nova_dificuldade = sistema.alterar_dificuldade(resultado_dados['resultados'],int(self.dificuldade.value))
-            return nova_dificuldade
 
+            print(nova_dificuldade)
+
+            resultado_final = (nova_dificuldade['sucessos'] + nova_dificuldade['criticos']) - nova_dificuldade['fracassos']
+            show_dados = ' '.join(str(x) for x in nova_dificuldade['resultados'])
+
+            embed.set_field_at(
+                index=0,
+                name='Dados',
+                value=f'`{show_dados}`',
+                inline=False
+            )
+            embed.set_field_at(
+                index=1,
+                name = 'Sucessos',
+                value = f'Rolou: **{nova_dificuldade['sucessos']}** Sucessos.',
+                inline = False
+            )
+            embed.set_field_at(
+                index=2,
+                name='Criticos',
+                value=f'Rolou: **{nova_dificuldade['criticos']}** Criticos.',
+                inline=False
+            )
+            embed.set_field_at(
+                index=3,
+                name='Falhas Criticas',
+                value=f'Rolou: **{nova_dificuldade['fracassos']}** Falhas Criticas.',
+                inline=False
+            )
+            embed.set_field_at(
+                index=4,
+                name='Resultado final',
+                value=f'`{resultado_final}`',
+                inline=False
+            )
 
         async def on_submit(self, interaction: discord.Interaction):
+            self.alterar_dificuldade()
             print (f'isso aqui é o print {self.alterar_dificuldade()}')
-            await interaction.response.send_message(f'Dificuldade definida para: {self.dificuldade.value}')
+            await self.mensagem.edit(
+                content=''.join(str(i) for i in resultado_dados['emoji']),
+                embed=embed,
+                view=view
+            )
 
     async def interacao_teste(interaction: discord.Interaction):
         await interaction.response.send_modal(DificuldadeModal())
@@ -202,7 +243,7 @@ async def vr(ctx:commands.Context, *dados:int):
     view.add_item(dificuldade)
     
     try:
-        await ctx.send(
+        mensagem = await ctx.send(
             content=''.join(str(i) for i in resultado_dados['emoji']),
             embed=embed,
             view=view)

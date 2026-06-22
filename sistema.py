@@ -29,13 +29,16 @@ def rolar(dados):
             sucessos += 1
 
         resultados_emoji.append(calculo_regras['emoji']) 
+    
+    resultado_final = (sucessos + criticos) - fracassos
 
     resultados = {
         'resultados':resultados,
         'fracassos':fracassos,
         'criticos':criticos,
         'sucessos':sucessos,
-        'emoji':resultados_emoji
+        'emoji':resultados_emoji,
+        'resultado_final':resultado_final
         }  
     
     return resultados
@@ -60,13 +63,17 @@ def alterar_dificuldade(valores, dificuldade):
 
         resultados_emoji.append(calculo_regras['emoji']) 
 
+    resultado_final = (sucessos + criticos) - fracassos
+
     resultados = {
         'resultados':valores,
         'fracassos':fracassos,
         'criticos':criticos,
         'sucessos':sucessos,
-        'emoji':resultados_emoji
+        'emoji':resultados_emoji,
+        'resultado_final':resultado_final
         }  
+    return resultados
     
 
 
