@@ -240,7 +240,7 @@ async def vr(ctx:commands.Context, *dados:int):
 
     botao.callback = callback
     view.add_item(botao)
-    view.add_item(dificuldade)
+    #view.add_item(dificuldade)
     
     try:
         mensagem = await ctx.send(
