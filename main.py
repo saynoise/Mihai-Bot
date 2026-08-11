@@ -107,11 +107,6 @@ async def vr(ctx:commands.Context, *dados:int):
         inline=False
     )
 
-    # embed.add_field(
-    #     #5
-    #     name='',
-    #     value='+-'*22
-    # )
     embed.add_field(
         #5
         name='',
