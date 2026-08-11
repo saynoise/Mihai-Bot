@@ -17,7 +17,13 @@ async def on_ready():
 
 @bot.command()
 async def vr(ctx:commands.Context, *dados:int):
+
     dados_total = sum(dados)
+
+    if dados_total == 0:
+        return await ctx.send(
+            content='Você não digitou nenhum valor!'
+        )
 
     if dados_total > 65:
         return await ctx.send(
@@ -43,7 +49,8 @@ async def vr(ctx:commands.Context, *dados:int):
 
     show_dados = ' '.join(str(x) for x in resultado_dados['resultados'])
 
-    if resultado_final != 0:
+    if resultado_final != 0 and resultado_final > 0:
+
         if resultado_dados['criticos'] == 0:
             embed = discord.Embed(
         title = 'Rolagem',
@@ -100,10 +107,15 @@ async def vr(ctx:commands.Context, *dados:int):
         inline=False
     )
 
+    # embed.add_field(
+    #     #5
+    #     name='',
+    #     value='+-'*22
+    # )
     embed.add_field(
         #5
         name='',
-        value='+-'*22
+        value='--DESENVOLVIDO POR SAYNOISE/MIHAI:drop_of_blood:-- '
     )
     
     async def callback(interaction: discord.Interaction):
@@ -136,6 +148,10 @@ async def vr(ctx:commands.Context, *dados:int):
         resultado_final = (sucessos + criticos) - fracassos
 
         show_dados = ' '.join(str(x) for x in resultados)
+        embed.add_field(
+                    name='',
+                    value='`REROLADO`'
+                )
         embed.set_field_at(
             index=0,
             name='Dados',
