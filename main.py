@@ -31,7 +31,7 @@ def criar_embed(ctx: commands.Context, resultado: dict, dificuldade: int = 6) ->
     embed.add_field(name='Falhas Críticas', value=f"**{resultado['fracassos']}**", inline=False)
     embed.add_field(name='Resultado Final', value=f"`{resultado_final}`", inline=False)
     embed.add_field(name='Dificuldade', value=f'`{dificuldade}+`', inline=False)
-    embed.set_footer(text='--DESENVOLVIDO POR SAYNOISE/MIHAI')
+    embed.set_footer(text='--DESENVOLVIDO POR SAYNOISE/MIHAI--')
     return embed
 
 
