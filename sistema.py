@@ -9,13 +9,12 @@ class Emojis:
 def rolar(dados):
     fracassos = 0
     criticos = 0
-    resultados = []
-    resultados_emoji = []
+    lista_resultados = []
     sucessos = 0
 
     for i in range(dados):
         rolagem = random.randint(1,10)
-        resultados.append(rolagem)
+        lista_resultados.append(rolagem)
 
         calculo_regras = regras(rolagem)
 
@@ -27,17 +26,19 @@ def rolar(dados):
 
         if calculo_regras['sucesso']:
             sucessos += 1
-
-        resultados_emoji.append(calculo_regras['emoji']) 
     
     resultado_final = (sucessos + criticos) - fracassos
 
+    lista_resultados = sorted(lista_resultados, reverse=True)
+
+    emojis_sorted = [regras(key)['emoji'] for key in lista_resultados]
+
     resultados = {
-        'resultados':resultados,
+        'resultados':lista_resultados,
         'fracassos':fracassos,
         'criticos':criticos,
         'sucessos':sucessos,
-        'emoji':resultados_emoji,
+        'emoji':emojis_sorted,
         'resultado_final':resultado_final
         }  
     
@@ -46,7 +47,6 @@ def rolar(dados):
 def alterar_dificuldade(valores, dificuldade):
     fracassos = 0
     criticos = 0
-    resultados_emoji = []
     sucessos = 0
 
     for valor in valores:
@@ -61,24 +61,23 @@ def alterar_dificuldade(valores, dificuldade):
         if calculo_regras['sucesso']:
             sucessos += 1
 
-        resultados_emoji.append(calculo_regras['emoji']) 
-
     resultado_final = (sucessos + criticos) - fracassos
+
+    valores = sorted(valores, reverse=True)
+
+    emojis_sorted = [regras(key, dificuldade)['emoji'] for key in valores]
 
     resultados = {
         'resultados':valores,
         'fracassos':fracassos,
         'criticos':criticos,
         'sucessos':sucessos,
-        'emoji':resultados_emoji,
+        'emoji':emojis_sorted,
         'resultado_final':resultado_final
         }  
     return resultados
     
-
-
-
-def regras(rolagem, valor_corte=6):
+def regras(rolagem:int, valor_corte=6):
     corte = valor_corte
     fracasso = False
     falha = False
