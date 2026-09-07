@@ -116,7 +116,6 @@ class RolagemView(discord.ui.View):
     async def alterar_dificuldade(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.response.send_modal(DificuldadeModal(self))
 
-
 load_dotenv()
 DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
 if not DISCORD_TOKEN:
@@ -127,11 +126,13 @@ if not DISCORD_TOKEN:
 intents = discord.Intents.all()
 bot = commands.Bot('!', intents=intents)
 
-
 @bot.event
 async def on_ready():
     print('bot inicializado com sucesso')
 
+@bot.command()
+async def VR(ctx: commands.Context, *dados: int):
+    vr(ctx, dados)
 
 @bot.command()
 async def vr(ctx: commands.Context, *dados: int):
@@ -151,7 +152,6 @@ async def vr(ctx: commands.Context, *dados: int):
         embed=criar_embed(ctx, resultado),
         view=view,
     )
-
 
 @vr.error
 async def vr_error(ctx: commands.Context, error):
