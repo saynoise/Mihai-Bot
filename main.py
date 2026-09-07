@@ -79,6 +79,7 @@ class RolagemView(discord.ui.View):
         self.ctx = ctx
         self.resultado = resultado
         self.dificuldade = 6
+        self.reroll_used = False
 
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
         if interaction.user.id != self.ctx.author.id:
@@ -90,6 +91,13 @@ class RolagemView(discord.ui.View):
 
     @discord.ui.button(label='Rerolar Falhas', style=discord.ButtonStyle.secondary)
     async def rerolar(self, interaction: discord.Interaction, button: discord.ui.Button):
+        if self.reroll_used:
+            await interaction.response.send_message(
+                'As falhas desta rolagem já foram reroladas.', ephemeral=True
+            )
+            return
+
+        self.reroll_used = True
         valores = self.resultado['resultados'][:]
         for indice, valor in enumerate(valores):
             if valor < self.dificuldade:
@@ -111,6 +119,11 @@ class RolagemView(discord.ui.View):
 
 load_dotenv()
 DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
+if not DISCORD_TOKEN:
+    raise RuntimeError(
+        'DISCORD_TOKEN não foi encontrado. Configure o token no arquivo .env.'
+    )
+
 intents = discord.Intents.all()
 bot = commands.Bot('!', intents=intents)
 
@@ -122,9 +135,12 @@ async def on_ready():
 
 @bot.command()
 async def vr(ctx: commands.Context, *dados: int):
+    if not dados:
+        return await ctx.send('Informe uma quantidade de dados maior que zero.')
+    if any(valor <= 0 for valor in dados):
+        return await ctx.send('Cada quantidade de dados deve ser um número positivo.')
+
     total = sum(dados)
-    if total == 0:
-        return await ctx.send('Você não digitou nenhum valor!')
     if total > MAX_DADOS:
         return await ctx.send(f'O limite de dados atualmente é {MAX_DADOS}.')
 
@@ -140,7 +156,10 @@ async def vr(ctx: commands.Context, *dados: int):
 @vr.error
 async def vr_error(ctx: commands.Context, error):
     if isinstance(error, commands.BadArgument):
-        await ctx.reply('VALOR INVÁLIDO!')
+        await ctx.reply('VALOR INVÁLIDO! Use apenas números inteiros positivos.')
+        return
+
+    raise error
 
 
 bot.run(DISCORD_TOKEN)

@@ -1,12 +1,23 @@
 import random
 
+
 class Emojis:
     sucesso = '<:sucesso:1512846827962237121>'
     falha = '<:falha:1512846801290530948>'
     critico = '<:critico:1512846854608650311>'
     fcritica = '<:falhacritica:1512846843183104031>'
 
+def _validar_dificuldade(dificuldade):
+    if not isinstance(dificuldade, int) or isinstance(dificuldade, bool):
+        raise ValueError('A dificuldade deve ser um inteiro entre 1 e 9.')
+    if not 1 <= dificuldade <= 9:
+        raise ValueError('A dificuldade deve estar entre 1 e 9.')
+
+
 def rolar(dados):
+    if not isinstance(dados, int) or isinstance(dados, bool) or dados < 1:
+        raise ValueError('A quantidade de dados deve ser um inteiro positivo.')
+
     fracassos = 0
     criticos = 0
     lista_resultados = []
@@ -45,6 +56,16 @@ def rolar(dados):
     return resultados
 
 def alterar_dificuldade(valores, dificuldade):
+    _validar_dificuldade(dificuldade)
+    valores = list(valores)
+    if not valores or any(
+        not isinstance(valor, int)
+        or isinstance(valor, bool)
+        or not 1 <= valor <= 10
+        for valor in valores
+    ):
+        raise ValueError('Os valores devem ser inteiros entre 1 e 10.')
+
     fracassos = 0
     criticos = 0
     sucessos = 0
@@ -78,13 +99,23 @@ def alterar_dificuldade(valores, dificuldade):
     return resultados
     
 def regras(rolagem:int, valor_corte=6):
+    if not isinstance(rolagem, int) or isinstance(rolagem, bool):
+        raise ValueError('A rolagem deve ser um inteiro entre 1 e 10.')
+    if not 1 <= rolagem <= 10:
+        raise ValueError('A rolagem deve estar entre 1 e 10.')
+    _validar_dificuldade(valor_corte)
+
     corte = valor_corte
     fracasso = False
     falha = False
     critico = False
     sucesso = False
 
-    if rolagem >= corte:
+    if rolagem == 1:
+        falha = True
+        fracasso = True
+        resultados_emoji = Emojis.fcritica
+    elif rolagem >= corte:
         sucesso = True
         if rolagem == 10:
             resultados_emoji = Emojis.critico
@@ -92,13 +123,9 @@ def regras(rolagem:int, valor_corte=6):
         else:
             resultados_emoji = Emojis.sucesso
 
-    if rolagem < corte:
+    elif rolagem < corte:
         falha = True
-        if rolagem == 1:
-            fracasso = True
-            resultados_emoji = Emojis.fcritica
-        else:
-            resultados_emoji = Emojis.falha
+        resultados_emoji = Emojis.falha
     
     resultados = {
         'fracasso':fracasso,

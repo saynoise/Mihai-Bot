@@ -14,7 +14,7 @@ de falhas e alteração de dificuldade.
 Instale as dependências:
 
 ```bash
-pip install discord.py python-dotenv
+pip install -r requirements.txt
 ```
 
 Crie um arquivo `.env` na raiz do projeto e informe o token do bot:
@@ -30,7 +30,7 @@ Nunca compartilhe o token nem faça commit do arquivo `.env`.
 Inicie o bot com:
 
 ```bash
-python new_main.py
+python main.py
 ```
 
 ## Comando de rolagem
@@ -53,6 +53,8 @@ atual é de 65 dados por rolagem.
 
 Somente a pessoa que executou o comando pode usar os botões da mensagem. As
 interações ficam disponíveis por cinco minutos.
+
+A rolagem `1` sempre é uma falha crítica, inclusive quando a dificuldade é 1.
 
 ## Estrutura
 
