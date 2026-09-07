@@ -132,7 +132,10 @@ async def on_ready():
 
 @bot.command()
 async def VR(ctx: commands.Context, *dados: int):
-    vr(ctx, dados)
+    try:
+        vr(ctx, dados)
+    except Exception as e:
+        print(e)
 
 @bot.command()
 async def vr(ctx: commands.Context, *dados: int):
