@@ -124,31 +124,11 @@ if not DISCORD_TOKEN:
     )
 
 intents = discord.Intents.all()
-bot = commands.Bot('!', intents=intents)
+bot = commands.Bot('!', intents=intents, case_insensitive=True)
 
 @bot.event
 async def on_ready():
     print('bot inicializado com sucesso')
-
-# solução temporaria
-@bot.command()
-async def VR(ctx: commands.Context, *dados: int):
-    if not dados:
-        return await ctx.send('Informe uma quantidade de dados maior que zero.')
-    if any(valor <= 0 for valor in dados):
-        return await ctx.send('Cada quantidade de dados deve ser um número positivo.')
-
-    total = sum(dados)
-    if total > MAX_DADOS:
-        return await ctx.send(f'O limite de dados atualmente é {MAX_DADOS}.')
-
-    resultado = sistema.rolar(total)
-    view = RolagemView(ctx, resultado)
-    await ctx.send(
-        content=''.join(resultado['emoji']),
-        embed=criar_embed(ctx, resultado),
-        view=view,
-    )
 
 @bot.command()
 async def vr(ctx: commands.Context, *dados: int):
