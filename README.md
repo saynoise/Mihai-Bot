@@ -41,7 +41,7 @@ Use o prefixo `!` seguido da quantidade de dados:
 !vr 5
 ```
 
-O bot rola os dados, exibe os resultados e calcula o resultado final. O limite
+O bot rola os dados, exibe os resultados em ordem decrescente e calcula o resultado final. O limite
 atual é de 65 dados por rolagem.
 
 ## Interações da rolagem
@@ -58,4 +58,3 @@ interações ficam disponíveis por cinco minutos.
 
 - `main.py`: inicialização do bot, comando e interações do Discord.
 - `sistema.py`: rolagem, regras e cálculo da dificuldade.
-- `main_old.py`: versão anterior do main antes de refatorar.
